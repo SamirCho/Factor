@@ -4,8 +4,7 @@ function factor(){
     let c=document.getElementById('c').value
 
     let extraCoef=1
-    let commonFactor=gcf(gcf(a,b),c)
-    
+
     if(a=="-"){
         a=-1
     }
@@ -21,18 +20,82 @@ function factor(){
     if(c==""){
         c=0
     }
-    
-    a/=commonFactor
-    b/=commonFactor
-    c/=commonFactor
-    extraCoef*=commonFactor
+    let commonFactor=gcf([a,b,c])
 
-    if(b**2-4*a*c<0){
+    if(commonFactor!=0){
+        a/=commonFactor
+        b/=commonFactor
+        c/=commonFactor
+        extraCoef*=commonFactor
+    }
+    
+    if(a==0&&c==0&&b!=0){
+        if(b==1){
+            b=""
+        }
+        if(b==-1){
+            b="-"
+        }
+        document.getElementById('container').innerHTML=b+"x"
+    }else if(b==0&&c==0){
+        if(a==0){
+            document.getElementById("container").innerHTML=0
+        }else{
+            if(a==1){
+                a=""
+            }
+            if(a==-1){
+                a="-"
+            }
+            document.getElementById('container').innerHTML=a+"x²"
+        }
+    }else if(b==0&&b**2-4*a*c<0){
+        let e=gcf([a,c])
+        extraCoef*=e
+        a/=e
+        c/=e
+        if(c>0){
+            c="+"+c
+        }
+        if(extraCoef==1){
+            extraCoef=""
+        }
+        if(extraCoef==-1){
+            extraCoef="-"
+        }
+        if(a==1){
+            a=""
+        }
+        if(a==-1){
+            a="-"
+        }
+        document.getElementById('container').innerHTML=(`${extraCoef}(${a}x²${c})`)
+    }else if(a==0&&b==0){
+        document.getElementById('container').innerHTML=c
+    }else if(b**2-4*a*c<0){
         if(b>0){
             b="+"+b
         }
         if(c>0){
             c="+"+c
+        }
+        if(a==1){
+            a=""
+        }
+        if(b==1){
+            b="+"
+        }
+        if(a==-1){
+            a="-"
+        }
+        if(b==-1){
+            b="-"
+        }
+        if(extraCoef==1){
+            extraCoef=""
+        }
+        if(extraCoef==-1){
+            extraCoef="-"
         }
         document.getElementById('container').innerHTML=(`${extraCoef}(${a}x²${b}x${c})`)
     }else{
@@ -43,8 +106,7 @@ function factor(){
         let addedCoef=false
 
         if(c==0){
-            let d=""
-            let e=gcf(a,b)
+            let e=gcf([a,b])
             a/=e
             b/=e
             if(e==1){
@@ -60,12 +122,11 @@ function factor(){
                 a="-"
             }
             if(b>0){
-                d="+"
+                b="+"+b
             }
-            document.getElementById('container').innerHTML=(`${e}x(${a}x${d+b})`)
+            document.getElementById('container').innerHTML=(`${e}x(${a}x${b})`)
         }else if(a==0){
-            let d=""
-            let e=gcf(b,c)
+            let e=gcf([b,c])
             b/=e
             c/=e
             if(e==1){
@@ -81,9 +142,9 @@ function factor(){
                 b="-"
             }
             if(c>0){
-                d="+"
+                c="+"+c
             }
-            document.getElementById('container').innerHTML=(`${e}(${b}x${d+c})`)
+            document.getElementById('container').innerHTML=(`${e}(${b}x${c})`)
         }else if(a==1&&a!=0){
             addedCoef=true
             if(extraCoef==1){
@@ -124,13 +185,13 @@ function factor(){
             }
             x1[1]=addSign(x1[1])
             x2[1]=addSign(x2[1])
-            let gcf1=gcf(x1[0],x1[1])
+            let gcf1=gcf([x1[0],x1[1]])
             if(gcf1!=1){
                 extraCoef*=gcf1
                 x1[0]/=gcf1
                 x1[1]/=gcf1
             }
-            let gcf2=gcf(x2[0],x2[1])
+            let gcf2=gcf([x2[0],x2[1]])
             if(gcf2!=1){
                 extraCoef*=gcf2
                 x2[0]/=gcf2
@@ -158,11 +219,11 @@ function factor(){
                 extraCoef="-"
             }
             if(x1[1]>0){
-                x1[1]=parseInt(x1[1])
+                x1[1]=parseFloat(x1[1])
                 x1[1]="+"+x1[1]
             }
             if(x2[1]>0){
-                x2[1]=parseInt(x2[1])
+                x2[1]=parseFloat(x2[1])
                 x2[1]="+"+x2[1]
             }
             if(addedCoef){
@@ -195,34 +256,46 @@ function factor(){
     }
 
     function isPrime(num){
-    if(isNaN(num)){
-        return false
-    }
-    if(Math.floor(num)!=num){
-        return isPrime(Math.floor(num))
-    }
-    if(num<0){
-        return isPrime(-num)
-    }
-    if(num==0||num==1){
-        return false
-    }
-    if(isNaN(num)){
-        return false
-    }else{
-        for (let i = 2; i < num; i++) {
-        if(num%i==0){
+        if(isNaN(num)){
             return false
         }
+        if(Math.floor(num)!=num){
+            return isPrime(Math.floor(num))
         }
-        return true
-    }
+        if(num<0){
+            return isPrime(-num)
+        }
+        if(num==0||num==1){
+            return false
+        }
+        if(isNaN(num)){
+            return false
+        }else{
+            for (let i = 2; i < num; i++) {
+                if(num%i==0){
+                    return false
+                }
+            }
+            return true
+        }
     }
 
-    function gcf(a,b){
+    function gcf(array){
+        if(array.length==0){
+            return 0
+        }
+        if(array.length==1){
+            return parseFloat(array.toString())
+        }
+        if(array.length>2){
+            let a1=array.shift()
+            let a2=array.shift()
+            let a3=array.shift()
+            return gcf([gcf([a1,a2]),a3])
+        }
         let gcd=1
-        aArray=factors(a)
-        bArray=factors(b)
+        aArray=factors(array[0])
+        bArray=factors(array[1])
         for (let i = 0; i < aArray.length; i++) {
             for (let j = 0; j < bArray.length; j++) {
                 if(aArray[i]==bArray[j]){
@@ -230,7 +303,7 @@ function factor(){
                 }
             }
         }
-        if(a<0&&b<0){
+        if(array[0]<0&&array[1]<0){
             gcd*=-1
         }
         return gcd
