@@ -27,6 +27,31 @@ function gcf(array){
     return gcd
 }
 
+function isPrime(num){
+    if(Math.floor(num)!=num){
+        return isPrime(Math.floor(num))
+    }
+    if(isNaN(num)){
+        return false
+    }
+    if(num<0){
+        return isPrime(-num)
+    }
+    if(num==0||num==1){
+      return false
+    }
+    if(isNaN(num)){
+      return false
+    }else{
+      for (let i = 2; i < num; i++) {
+        if(num%i==0){
+          return false
+        }
+      }
+      return true
+    }
+  }
+
 function factors(num){
     if(num==0){
         return([0])
@@ -43,4 +68,76 @@ function factors(num){
     return a
 }
 
-console.log(gcf([-6,8]))
+function medianFactors(num){
+    let array=factors(num)
+    i=Math.floor(array.length/2)
+    return [array[i],array[array.length-1-i]]
+}
+
+function primeFactor(num){
+    return primeFactorRec([num])
+}
+
+function primeFactorRec(array){
+    if(array.length==1){
+        if(isPrime(array[0])){
+            return [array[0]]
+        }else{
+            array=medianFactors(array[0])
+        }
+    }
+    if(!arrayPrime(array)){
+        for (let i = 0; i < array.length; i++) {
+            if(!isPrime(array[i])){
+                array=addAll(array,medianFactors(array[i]))
+                array.splice(i,1)
+            }
+        }
+        return primeFactorRec(array)
+    }
+    return quickSort(array,0,array.length-1)
+}
+
+function quickSort(array, start, end) {
+	if(array.length<=1){
+		return array
+	}
+	return partition(array,start,end)
+}
+
+function partition(array, start, end) {
+	let pivot=array[Math.floor((start+end)/2)]
+	let leftArray=[]
+	let middleArray=[]
+	let rightArray=[]
+	for (let i = 0; i < array.length; i++) {
+		if(array[i]<pivot){
+			leftArray.push(array[i])
+		}
+		if(array[i]==pivot){
+			middleArray.push(array[i])
+		}
+		if(array[i]>pivot){
+			rightArray.push(array[i])
+		}
+	}
+	return quickSort(leftArray,0,leftArray.length-1).concat(middleArray,quickSort(rightArray,0,rightArray.length-1))
+}
+
+function arrayPrime(array){
+    for (let i = 0; i < array.length; i++) {
+        if(!isPrime(array[i])){
+            return false
+        }
+    }
+    return true
+}
+
+function addAll(addTo,addFrom){
+    for (let i = 0; i < addFrom.length; i++) {
+        addTo.push(addFrom[i])
+    }
+    return addTo
+}
+
+console.log(primeFactor(24))
