@@ -294,8 +294,8 @@ function factor(){
             return gcf([gcf([a1,a2]),a3])
         }
         let gcd=1
-        aArray=factors(array[0])
-        bArray=factors(array[1])
+        let aArray=factors(array[0])
+        let bArray=factors(array[1])
         for (let i = 0; i < aArray.length; i++) {
             for (let j = 0; j < bArray.length; j++) {
                 if(aArray[i]==bArray[j]){
